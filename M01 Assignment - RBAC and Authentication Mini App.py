@@ -2,11 +2,11 @@
 Creating a basic app that demonstrates the core ideas of authentication, roles and access control.
 
 I think I am going to try to do this using tkinter. I am using tkinter v 8.6.15
-"""
-import tkinter as tk
-from tkinter import *
-from tkinter import ttk
 
+UPDATE - I am going to attempt to add an encrypted messaging functionaility between the two applications.
+        This may require threading because tkinter continously loops as well as socket methods used to move 
+        messages between to applications. 
+"""
 
 ############ ALL OF THIS BELOW IS NOTES FROM THE PYTHON DOCS. THIS IS MY FIRST TIME REALLY WORKING WITH TKINTER. ########################
 ############################# PROCEED TO VARIABLE INITIALIZATION #######################################
@@ -66,182 +66,141 @@ print(set(dir(btn)) - set(dir(frm)))
 
 # myapp.master.title('My Do-Nothing Application')
 # myapp.master.maxsize(1000,400)
+################################# Login App #########################################################
 
-# Start the program
+from tkinter import *
+from tkinter import ttk
 
 
+class LoginApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title('User Login')
 
-user_roles = {'admin': ['lovelace', 'knuth'],
-              'user': ['bob', 'jerry']}
-credentials = {'lovelace': 'ada', 'knuth': 'donald', 'bob':'bob', 'jerry':'jerry'}          # I used dictionaries to contain my authentication and authorization information. 
-# error_label = None    This is a work in progress. 
+        # These are the dictionaries that I will use to establish Authentication and Authorization
+        self.user_roles = {
+            'admin': ['lovelace', 'knuth'],
+            'user': ['bob', 'jerry']
+        }
+        self.credentials = {
+            'lovelace': 'ada',
+            'knuth': 'donald', 
+            'bob': 'bob',
+            'jerry': 'jerry'
+        }
 
-def authenticate(user, password):
-    """ This function aims to receive the username and password entry and compare it to the credentials dictionary. 
-        If the username is in the dictionary, it will move forward to the next if statement. It then compares the password entered
-        with the password on file. If all is well, then we begin the authorization by calling the authorize() function. 
-        If either instance fails, a generic error message is displayed. Unfortunately the error message is displayed once it compares to 'lovelace'
-        and fails the check in the iteration.
+        # Setting up the user interface. This is done during the initialization of ht LoginApp(root) class.
+        self.setup_ui()
+
+    def setup_ui(self):
+        """ This builds the main login screen."""
+        self.mainframe = ttk.Frame(self.root, padding=(3, 3, 12, 12))
+        self.mainframe.grid(column=0, row=0, sticky='NSEW')
+
+        # Variables received from input.
+        self.username_var = StringVar()
+        self.password_var = StringVar()
+
+        # This will create the entry widgets.
+        ttk.Label(self.mainframe, text='Username: ').grid(column=1, row=1, sticky='E')
+        self.user_entry = ttk.Entry(self.mainframe, width=15, textvariable=self.username_var)
+        self.user_entry.grid(column=2, row=1, sticky='WE')
+
+        ttk.Label(self.mainframe, text='Password: ').grid(column=1, row=2, sticky='E')
+        self.pw_entry = ttk.Entry(self.mainframe, width=15, textvariable=self.password_var)
+        self.pw_entry.grid(column=2, row=2, sticky='WE')
+
+        # This will create the login button.
+        self.login_btn = ttk.Button(self.mainframe, text='Log In', command=self.authenticate)
+        self.login_btn.grid(column=3, row=3, sticky='W')
+
+        # Error label will now be persistent but will initialize as an empty string.
+        self.error_label = ttk.Label(self.mainframe, text='', foreground='red')
+        self.error_label.grid(column=3, row=1, sticky='W')
+
+        # This will configure the layout.
+        self.root.columnconfigure(0, weight=1)
+        self.root.rowconfigure(0, weight=1)
+        for child in self.mainframe.winfo_children():
+            child.grid_configure(padx=5, pady=5)
         
-        I can workaround this by hiding the login window and deleting the label in the background. And deiconifying it when I close out of one of the Toplevel() windows.
-        I want to figure out how to add it to the command as a second function for the button. 
-        I was running out of time to pretty it up and wanted to make sure that I submitted an application that met the requirements of the assignment."""
+        # This places the cursor in the user_entry widget and binds the Return key to the same function as the login_btn.
+        self.user_entry.focus()
+        self.root.bind('<Return>', lambda event: self.authenticate())
+
     
-    for entry in credentials:
-        if user == entry:
-            pw = credentials[entry]
-            if password == pw:
-                authorize(user)
-                break
-            else:
-                ttk.Label(mainframe, text='Invalid Username and Password', foreground='red').grid(column=3, row=1, sticky=E)
+    def authenticate(self):
+        """ Validates the credentials and, if True, begins authorization logic using authorize() function."""
+        user = self.username_var.get()
+        pw = self.password_var.get()
+
+        if user in self.credentials and self.credentials[user] == pw:
+            self.error_label.config(text='')  # This will clear an error label from a previously failed login attempt
+            self.authorize(user)
         else:
-            ttk.Label(mainframe, text='Invalid Username and Password', foreground='red').grid(column=3, row=1, sticky=E)
+            self.error_label.config(text='Invalid Username or Password') # An error message will be displayed in 'red' due to previous formatting of the persistent widget.
+
     
-def authorize(user):
-    if user in user_roles['admin']:
-        open_admin()
-    elif user in user_roles['user']:
-        open_user()
-
-def open_admin():
-    """ This creates a toplevel window that opens the administrative panel with 'top secret stuff'. I created this by referencing the documents and tutorials referenced in the documents.
-        I will need to add more child widgets and play with the padding to really have a good idea of how the padding effects the GUI, so that I can better document my work. """
-
-    # root.withdraw()
-    admin_window = Toplevel(root)
-    admin_window.title('Administrative Panel')
-    # admin_window.geometry('300x100') I will need to learn how to center my grid, if possible. 
+    def authorize(self, user):
+        """ This is redirect to a specific window dendent on the privelages established in the user_roles dictionary."""
+        if user in self.user_roles['admin']:
+            self.open_admin()
+        elif user in self.user_roles['user']:
+            self.open_user()
     
-    admin_frame = ttk.Frame(admin_window, padding=(3, 3, 12, 12))
-    admin_frame.grid(column=0, row=0, sticky=(N, W, E, S))
+
+    def open_admin(self):
+        """ Logic to provide unique capabilites for each window. This will handle the logic for those with administrative priveleges. """
+        self.root.withdraw()    # Hides the login window
+
+        admin_window = Toplevel(self.root)
+        admin_window.title('Administrative Controls')
+
+        # When the 'x' is clicked, a close_panel() function will carry on and bring the login window back.
+        admin_window.protocol('WM_DELETE_WINDOW', lambda: self.close_panel(admin_window))
+
+        admin_frame = ttk.Frame(admin_window, padding=20)
+        admin_frame.pack(expand=True, fill='both')
+
+        ttk.Label(admin_frame, text='Administrative Message Panel', foreground='purple', font=('Roboto', 12)).pack(pady=10)
+        ttk.Button(admin_frame, text='Logout', command=lambda: self.close_panel(admin_window)).pack()
+        ttk.Button(admin_frame, text='Open Login', command=lambda: self.open_login()).pack()
     
-    ttk.Label(admin_frame, text='This is top-secret stuff here!', foreground='purple', font='Roboto').grid(column=1, row=1, sticky=(W, E))
-    ttk.Button(admin_frame, text='Close', command=admin_window.destroy).grid(column=1, row=2, sticky=(W, E))   # I want to add my deiconify logic here. 
+
+    def open_user(self):
+        """ Logic prices unique capabilities for the user window. Those who are only granted user priveleges. """
+        self.root.withdraw()
+
+        user_window = Toplevel(self.root)
+        user_window.title('User Controls')
+
+        user_window.protocol('WM_DELETE_WINDOW', lambda: self.close_panel(user_window))
+
+        user_frame = ttk.Frame(user_window, padding=20)
+        user_frame.pack(expand=True, fill='both')
+
+        ttk.Label(user_frame, text="Jerry and Bob's Message Panel", foreground='green', font=('Roboto', 12)).pack(pady=10)
+        ttk.Button(user_frame, text='Logout', command=lambda: self.close_panel(user_window)).pack()
+
+
+    def close_panel(self, window):
+        """ Destroys the top window and unhides the login screen."""
+        window.destroy()
+        self.username_var.set('')   # Clears the fields before bringing the login window back.
+        self.password_var.set('')
+        self.root.deiconify()       # Brings the login screen back.
+
     
-    admin_window.columnconfigure(0, weight=1)
-    admin_window.rowconfigure(0, weight=1)
-    
-    admin_frame.columnconfigure(2, weight=1)
-    for child in admin_frame.winfo_children:
-        child.grid_configure(padx=5, pady=15)
+    def open_login(self):
+        """ Allows for opening the login window without destroying the current window.
+            This is necessary so that I can use the separate windows as a client and 
+            server for encrypted messaging."""
+        self.username_var.set('')
+        self.password_var.set('')
+        self.root.deiconify()
 
 
-def open_user():
-    """ This creates a toplevel window that opens the user panel with 'Jerry and Bob stuff'. I created this by referencing the documents and tutorials referenced in the documents.
-        I will need to add more child widgets and play with the padding to really have a good idea of how the padding effects the GUI, so that I can better document my work. """
-
-    # root.withdraw()  Can't use this yet. Not without deiconify
-
-    user_window = Toplevel(root)
-    user_window.title('User Panel')
-    
-    user_frame = ttk.Frame(user_window, padding=(3, 3, 12, 12))
-    user_frame.grid(column=0, row=0, sticky=(N, W, E, S))
-    
-    ttk.Label(user_frame, text='This is for Jerry and Bob.', foreground='green', font='Roboto').grid(column=1, row=1, sticky=(W, E))
-    ttk.Button(user_frame, text='Close', command=user_window.destroy).grid(column=1, row=2, sticky=(W, E))      # I want to add my deiconify logic here.
-    
-    user_window.columnconfigure(0, weight=1)
-    user_window.rowconfigure(0, weight=1)
-    
-    user_frame.columnconfigure(2, weight=1)
-    for child in user_frame.winfo_children:
-        child.grid_configure(padx=5, pady=15)
-
-
-root = Tk()
-# if error_label is not None:
-#     error_label.destroy()
-#     error_label = None
-
-root.title('User Login')   # Sets the title of the window
-
-
-mainframe = ttk.Frame(root, padding=(3, 3, 12, 12))     # Child element of the root. Frame widget with padding.
-mainframe.grid(column=0, row=0, sticky=(N, W, E, S))    
-
-user = StringVar()      # Allows for variable input as string
-user_entry = ttk.Entry(mainframe, width=10, textvariable=user)  # Child of mainframe. Variable name assigned as user.
-user_entry.grid(column=2, row=1, sticky=(W, E))
-
-password = StringVar()
-password_entry = ttk.Entry(mainframe, width=10, textvariable=password)  # Child of mainframe. Variable name assigned as password. 
-password_entry.grid(column=2, row=2, sticky=(W, E))
-
-ttk.Button(mainframe, text='Log In', command=lambda: authenticate(user.get(), password.get())).grid(column=3, row=3, sticky=W)   # Button initiates event that calls authenticate() with user, password parameters
-
-ttk.Label(mainframe, text='Username: ').grid(column=1, row=1, sticky=E)
-ttk.Label(mainframe, text='Password: ').grid(column=1, row=2, sticky=E)
-
-root.columnconfigure(0, weight=1)
-root.rowconfigure(0, weight=1)
-mainframe.columnconfigure(2, weight=1)
-for child in mainframe.winfo_children():
-    child.grid_configure(padx=5, pady=5)
-
-user_entry.focus()
-root.bind('<Return>', lambda event: authenticate(user.get(), password.get()))  # Binds the return key to the same event as the button click. 
-
-
-
-
-#
-# I want to refactor this logic into a single class, but I didn't have enough time to figure it out before the assignment was due.
-#
-# class App:
-#     def __init__(self, root):
-#         self.root = root
-#         self.login()
-#         self.error_label = None
-
-#     def login(self):
-#         if self.error_label is not None:
-#             self.error_label.destroy()
-#             self.error_label = None
-
-#         self.root.title('User Login')
-
-
-#         self.mainframe = ttk.Frame(self.root, padding=(3, 3, 12, 12))
-#         self.mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
-
-#         self.user = StringVar()
-#         self.user_entry = ttk.Entry(self.mainframe, width=10, textvariable=self.user)
-#         self.user_entry.grid(column=2, row=1, sticky=(W, E))
-
-#         self.password = StringVar()
-#         self.password_entry = ttk.Entry(self.mainframe, width=10, textvariable=self.password)
-#         self.password_entry.grid(column=2, row=2, sticky=(W, E))
-
-#         ttk.Button(self.mainframe, text='Log In', command=lambda: authenticate(self.user.get(), self.password.get())).grid(column=3, row=3, sticky=W)
-
-#         ttk.Label(self.mainframe, text='Username: ').grid(column=1, row=1, sticky=E)
-#         ttk.Label(self.mainframe, text='Password: ').grid(column=1, row=2, sticky=E)
-
-#         self.root.columnconfigure(0, weight=1)
-#         self.root.rowconfigure(0, weight=1)
-#         self.mainframe.columnconfigure(2, weight=1)
-#         for child in self.mainframe.winfo_children():
-#             child.grid_configure(padx=5, pady=5)
-
-#         self.user_entry.focus()
-#         self.root.bind('<Return>', lambda event: authenticate(self.user.get(), self.password.get()))
-
-
-#     def authenticate(self, user, password):
-#         for entry in credentials:
-#             if self.user == entry:
-#                 print('she is in here')
-#                 pw = credentials[entry]
-#                 if password == pw:
-#                     print('password is good')
-#                     self.authorize(user)
-#                     break
-#                 else:
-#                     print('password not good')
-#                     ttk.Label(self.mainframe, text='Invalid Username and Password', foreground='red').grid(column=3, row=1, sticky=E)
-#             else:
-#                 print('not here')
-#                 ttk.Label(self.mainframe, text='Invalid Username and Password', foreground='red').grid(column=3, row=1, sticky=E)
-root.mainloop()
+if __name__ == '__main__':
+    root = Tk()
+    app = LoginApp(root)
+    root.mainloop()
