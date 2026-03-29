@@ -1,0 +1,27 @@
+# Ignores the Python Artifacts
+__pychache__/
+*.py[cod]
+*$py.class
+
+# Ignoring Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Ignore vscode
+.vscode/
+
+# Ignore Windows System Files
+Thumbs.db
+desktop.ini
+
+# Security and Secrets (Demo specific)
+*.key
+*.pem
+.env
+
+# Build and distribution
+build/
+dist/
+*.egg-info/
