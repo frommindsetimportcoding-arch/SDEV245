@@ -26,6 +26,7 @@ M02 Assignment - Encryption and Decryption Demo
   A button command allows me to use an open_server() method and open_client() method from the admin window. The client and the server have a very similar interface appearance, but I created a second class called SecureMessage() to handle the network and              encryption. The open_server and open_client methods instantiate their own SecureMessage() object (self.server_network = SecureMessage() and self.client_network = SecureMessage()). Concurrency was needed because both tkinter mainloop() and socket methods require    continuous listening (looping) and the GUI will freeze up. threading was used to solve this issue. 
 
   Once I was able to get the messages to send and receive after adding the encryption logic, I defined a method that creates another window (def open_sniffer()) and attached it to another button, but this time in the user window ('Fire Me'). It basically creates a   scolling text box that outputs the traffic that passes between the interceptor and the server/client (server <--> interceptor <--> client). This proves that the data is encrypted between the output you see in the client and server message control message log.
+  
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 M03 Assignment -  Secure Hashing and Encryption
   For this assignment, I went a little easier on myself and did not incorporate tkinter. I really wanted to get a grasp on the library and the last two assignments helped tremendously. I needed to focus on time effeciency this week so that I can have time to work on the group project in my other class. I used this assignment as an opportunity to strengthen my class comprehension. 
@@ -36,20 +37,20 @@ M03 Assignment -  Secure Hashing and Encryption
     
   I placed everything in a while loop so that you could run through each objective without restarting the program.
   - To exit the program type 'quit'.
-CaesarSubstitution()
+**CaesarSubstitution()**
   For this class, I controlled the shift in the ASCII code to avoid having additional code to limit the range of input. You are prompted to enter a message and the program runs an encryption and decryption process that results in the output for each process.
   - We are converting the message to ASCII values using ord(char), iterating through the string.
   - I apply a shift value of 10 which is added to the ASCII value. The range is checked to make sure that the values fall between 97-122 (lowercase alphabet)
   - Then the ASCII value is converted to the character representation.
   - The result is appended to a variable called 'result'.
 
-HashingSHA()
+**HashingSHA()**
   This class is designed to initialize by requesting an input to store as the message. I use Python's hashlib library to create a hashed object and a hexidecimal digest for legibility.
   - The hash_encode function stores the orginal hex value and prints it.
   - The modify_msg function stores a modified hex value and prints it, so that you can see that even changing one character modifies the whole hash.
   - The revert_msg function asks that you type the orignal message, so that you can see that the hash values are identical.
 
-Signature()
+**Signature()**
   This class utilizes the cryptography library. In a nutshell what happens is this:
   - private and public keys are generated for both the sender and the rceiver.
   - sender function accepts an input message.
