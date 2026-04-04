@@ -54,13 +54,13 @@ M03 Assignment -  Secure Hashing and Encryption
   This class utilizes the cryptography library. In a nutshell what happens is this:
   - private and public keys are generated for both the sender and the rceiver.
   - sender function accepts an input message.
-  -   sender uses sender_private_key to sign the message.
-  -   The parameters are the message, the padding and the hashing function used.
-  -     The padding has additional parameters. The mask generation function spreads randomness across the data. salt_length defines how much random noise to add.
-  -     The padding is being hashed with SHA256 as well and the salt is added to the message hash.
+  - sender uses sender_private_key to sign the message.
+  - The parameters are the message, the padding and the hashing function used.
+  - The padding has additional parameters. The mask generation function spreads randomness across the data. salt_length defines how much random noise to add.
+  - The padding is being hashed with SHA256 as well and the salt is added to the message hash.
   - Rceiver function is decrypting the signature to obtain the hashed value of the message received.
-  -   It also takes the message received and uses the same hashing algorithm.
-  -     The values are compared to see if they match.
-  -     A message is displayed with success or failure depending on whether the message was tampered with or not.
+  - It also takes the message received and uses the same hashing algorithm.
+  - The values are compared to see if they match.
+  - A message is displayed with success or failure depending on whether the message was tampered with or not.
 
   The user has the option to tamper with the message to see that the sign() and verify() methods are working appropriately.
