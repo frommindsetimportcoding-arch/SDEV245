@@ -63,5 +63,4 @@ M03 Assignment -  Secure Hashing and Encryption
   - It also takes the message received and uses the same hashing algorithm.
   - The values are compared to see if they match.
   - A message is displayed with success or failure depending on whether the message was tampered with or not.
-
-  The user has the option to tamper with the message to see that the sign() and verify() methods are working appropriately.
+  - The user has the option to tamper with the message to see that the sign() and verify() methods are working appropriately.
