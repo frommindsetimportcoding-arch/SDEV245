@@ -37,6 +37,7 @@ M03 Assignment -  Secure Hashing and Encryption
     
   I placed everything in a while loop so that you could run through each objective without restarting the program.
   - To exit the program type 'quit'.
+
 **CaesarSubstitution()**
   For this class, I controlled the shift in the ASCII code to avoid having additional code to limit the range of input. You are prompted to enter a message and the program runs an encryption and decryption process that results in the output for each process.
   - We are converting the message to ASCII values using ord(char), iterating through the string.
