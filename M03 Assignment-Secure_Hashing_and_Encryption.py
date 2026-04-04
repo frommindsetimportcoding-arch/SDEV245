@@ -1,3 +1,10 @@
+""" I have created three classes to handle the three objectives of this assignment. 
+    1. Write an app that uses a simple substitution cipher (Caesar cipher or similar) to encrypt/decrypt input text. (CaesarSubstitution())
+    2. Write an app that generates SHA-256 hashes for input strings or files. (HashingSHA())
+    3. Use OpenSSL or a tool to simulate a digital signature (sign/verify). (Signature())
+    
+    I placed everything in a while loop so that you could run through each objective without restarting the program."""
+
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import hashes
 import hashlib
@@ -114,7 +121,10 @@ class Signature:
 
 
     def sender(self):
-        
+        """ Accepts input as string and encodes the object as 'utf-8'. A signature is created using the sender_private_key to sign. 
+            The parameters are the message, the padding which adds additional randomized binary to the hashed value to obfuscate the signature. The parameters
+            inside of the padding are the mask generation function (MGF1 is standard) which tells how to spread the randomness across the data, and the salt_length
+            parameter which defines how much random noise to add. The last parameter is the hashing function used against the message input. """
         self.message = (input(f'\nEnter message here:  ')).encode('utf-8')
 
         self.signature = self.sender_private_key.sign(
@@ -131,7 +141,8 @@ class Signature:
 
     
     def receiver(self):
-
+        """ This function is designed to rehash the message that was received and compare the hash values. They decrypt the signature to reveal the
+            original hash value and then make the comparison. A try-except clause is used to capture a tampered message."""
         try:
             # The verify method compares the signature to a new hash of the message.
             # If it doesn't match, it raises an InvalidSignature exception.
@@ -150,6 +161,7 @@ class Signature:
 
 
     def tamper(self):
+        """ Simply determines if the user would like to modify the message, so that you can see that the exception will be raised when modified."""
         decision = input('Would you like to tamper with the message? Enter "y" for yes or "n" for no.\nTamper:  ' )
 
         if decision.lower() == "y":
