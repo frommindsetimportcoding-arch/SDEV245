@@ -64,3 +64,10 @@ M03 Assignment -  Secure Hashing and Encryption
   - The values are compared to see if they match.
   - A message is displayed with success or failure depending on whether the message was tampered with or not.
   - The user has the option to tamper with the message to see that the sign() and verify() methods are working appropriately.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+Module04 Midterm Exam
+This appplication handles confidentiality by enrypting the user input and decrypting at a later point in the program. 
+Integrity is secured by hashing the input and verifying the hash of the decrypted message to ensure that no tampering has been done to the message. 
+Availabilty is ensured because I chose to use reputable libraries for my encryption and hashing methods. I also utilized Python for the program which is one of the largest user bases in the development world. 
+
+Entropy was performed using the secrets library, which is a standard library in python. The secrets library generates randomness from the noise of pc components that the application is performed on. An algorithm runs on top of the noise generation to ensure enough entropy is available at any given point of time. Im my application, entropy is used in the creation of the shared_key as well as the initialization vector that will be used to salt the hash. The use of the initialization vector ensures that a message like 'Hello' is not hashed the same way twice. This is especially useful in salting passwords. 
