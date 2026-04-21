@@ -71,3 +71,6 @@ Integrity is secured by hashing the input and verifying the hash of the decrypte
 Availabilty is ensured because I chose to use reputable libraries for my encryption and hashing methods. I also utilized Python for the program which is one of the largest user bases in the development world. 
 
 Entropy was performed using the secrets library, which is a standard library in python. The secrets library generates randomness from the noise of pc components that the application is performed on. An algorithm runs on top of the noise generation to ensure enough entropy is available at any given point of time. Im my application, entropy is used in the creation of the shared_key as well as the initialization vector that will be used to salt the hash. The use of the initialization vector ensures that a message like 'Hello' is not hashed the same way twice. This is especially useful in salting passwords. 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Module05 Assignment OWASP Top 10 Code Fix
+All of the responses were recorded in a Jupyter Notebook. I felt that this was the easiest way to answer and provided the best readability. 
