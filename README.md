@@ -64,13 +64,44 @@ M03 Assignment -  Secure Hashing and Encryption
   - The values are compared to see if they match.
   - A message is displayed with success or failure depending on whether the message was tampered with or not.
   - The user has the option to tamper with the message to see that the sign() and verify() methods are working appropriately.
+    
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 Module04 Midterm Exam
 This appplication handles confidentiality by enrypting the user input and decrypting at a later point in the program. 
 Integrity is secured by hashing the input and verifying the hash of the decrypted message to ensure that no tampering has been done to the message. 
 Availabilty is ensured because I chose to use reputable libraries for my encryption and hashing methods. I also utilized Python for the program which is one of the largest user bases in the development world. 
 
 Entropy was performed using the secrets library, which is a standard library in python. The secrets library generates randomness from the noise of pc components that the application is performed on. An algorithm runs on top of the noise generation to ensure enough entropy is available at any given point of time. Im my application, entropy is used in the creation of the shared_key as well as the initialization vector that will be used to salt the hash. The use of the initialization vector ensures that a message like 'Hello' is not hashed the same way twice. This is especially useful in salting passwords. 
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 Module05 Assignment OWASP Top 10 Code Fix
 All of the responses were recorded in a Jupyter Notebook. I felt that this was the easiest way to answer and provided the best readability. 
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Module08 Final Project Secret Scanner
+SECRET_PATTERNS is a dictionary with 6 key, value pairs that use regex from the https://github.com/odomojuli/regextokens repo.
+
+scan_file() iterates through a read only file as f. f is enumerated so that we can grab the line_num for the purposes of the assignment.
+(f,1) tells us we want to enumerate through the lines in the file currently opened and start the enumeration at 1 instead of 0. 
+We iterate through the dictionary SECRET_PATTERNS to grab the type and pattern and we check them against re.search and if true we append the
+desired information to the results dictionary. 
+- errors='ignore' ignores errors where the file cannot read the encoding
+- exception handling hanles any other error that were not ignored and logs the error in the terminal.
+
+setup_logging(verbose) checks to see if the --verbose flag was used in the command line (part of the argparse logic) and if true sets logging to DEBUG (10) which is like the radio station that is being picked up.
+Otherwise logging.INFO (20) is used and we don't get all the debug information from any logger.debug messages. 
+This is done in logging.basicConfig with level=level. We also structure the message and date format and use force=True to force the changes between DEBUG and INFO.
+
+scanner() is the main logic and does the real work. 
+First we configure our argparse. We assign the argparse engine to the parser object. description just provides a nice helpful message for --help
+We use the engine object to add_argument. The only required argument is 'path'. This allows us to declare a file path in command line 'python secret_scanner.py C:\users\me\someDirectory\a_file.txt'
+We add the optional argument -v or --verbose which is used as a boolean value to set DEBUG for logger.debug
+This is checked with if args.verbose:
+target = args.path would be like saying target = sysargv[1]. This method is much prettier and more helpful as well.
+The actual work is done in the os.path.isfile(target) and os.path.isdir(target) checks which then runs the scan_file() from above to grab the results dictionary
+for the os.path.isdir(target) we grab the root and the files from the os.walk(target) and join them back together if a file ends with a valid extension ('.py', '.env', '.txt', etc)
+In verbose mode we can see every file scanned. and we scan the file path and return a results dictionary if any secrets are found. Those get added to an all_results list
+that we will iterate through to print the results by grabbing the values associated with each file_path results dictionary 'file', 'line', 'type', and 'match'.
