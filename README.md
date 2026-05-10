@@ -82,6 +82,7 @@ All of the responses were recorded in a Jupyter Notebook. I felt that this was t
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Module08 Final Project Secret Scanner
+
 SECRET_PATTERNS is a dictionary with 6 key, value pairs that use regex from the https://github.com/odomojuli/regextokens repo.
 
 scan_file() iterates through a read only file as f. f is enumerated so that we can grab the line_num for the purposes of the assignment.
